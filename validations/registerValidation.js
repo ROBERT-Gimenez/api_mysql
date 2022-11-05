@@ -32,4 +32,6 @@ let registerValidation = [
     .isString("on").withMessage("Debes aceptar los Terminos y condiciones")
 ]
 
+
+
 module.exports = registerValidation;
