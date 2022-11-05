@@ -10,9 +10,15 @@ let validateLogin = [
         .notEmpty().withMessage("Ingrese una Contraseña"),
     body("custom").custom((value, { req }) => {
         return users.findOne({where:{email:req.params.email}})
-        then((user) => {
+        .then((user) => {
             let validation = bcrypt.compareSync(req.body.password , user.password);
-            if(!bcrypt.compareSync(req.body.password))
+            if(!bcrypt.compareSync(req.body.password , user.password)){
+                return Promise.reject("Datos erróneos , ingréselos nuevamente ")
+            }
+        }).catch((error) =>{
+            return Promise.reject("Email o contraseña incorrecta ")
         })
     })
 ]
+
+module.exports = validateLogin;
