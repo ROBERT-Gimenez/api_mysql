@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs')
 const app = express();
-const apiRouter = require('./routes/api')
+const apiRouter = require('./routes/apiAdmin')
 
 require('./db');
 /* Middleware */

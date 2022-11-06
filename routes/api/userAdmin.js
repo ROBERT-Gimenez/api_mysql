@@ -1,5 +1,8 @@
 const router = require('express').Router();
-const user = require('../../controllers/api/userController')
+const user = require('../../controllers/api/userController');
+const loginValidation = require("../../validations/loginValidation");
+const registerValidation = require("../../validations/registerValidation");
+
 
 router.get('/' , user.list);
 
