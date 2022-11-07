@@ -1,5 +1,5 @@
 module.exports = ( sequelize , type) => {
-    return sequelize.define('Producto' , {
+    const Producto = sequelize.define('Producto' , {
         id: {
             type: type.INTEGER(11),
             primaryKey: true,
@@ -41,5 +41,19 @@ module.exports = ( sequelize , type) => {
             type: type.INTEGER(11),
             
         }
-    })
+    }
+    )
+     /* Creating a relationship between the Producto and Categoria and Usuarios tables. */
+     Producto.associate = (models) => {
+        Producto.belongsTo(models.Categoria, {
+            as:"category" ,
+            foreignKey:"categoryid",
+        })
+        Producto.belongsTo(models.Usuarios , {
+            as:"Usuario",
+            foreignKey:"user_id",
+        })
+    }
+    return Producto
+
 }
