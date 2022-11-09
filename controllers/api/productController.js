@@ -2,8 +2,7 @@ const {products , categori } = require("../../db");
 const {validationResult} = require("express-validator");
 const fs = require("fs");
 const path = require("path");
-
-module.exports = {
+  module.exports = {
     list: (req, res) => {
         products.findAll()
         .then((products) => {

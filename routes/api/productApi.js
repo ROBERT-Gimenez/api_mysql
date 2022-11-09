@@ -1,15 +1,17 @@
 const router =require("express").Router();
 const productController = require("../../controllers/api/productController")
+const uploadFile = require('../../middlewares/imgProduct');
+
 
 router.get('/', productController.list);
 
 router.get('/:id', productController.detalle);
 
-router.post('/create', productController.create);
+router.post('/create', uploadFile.single('image'), productController.create);
 
-router.put('/:id', productController.productUpdate);
+router.put('/edit/:id', productController.productUpdate);
 
-router.delete('/:id', productController.delete);
+router.delete('/delete/:id',uploadFile.single('image'), productController.delete);
 
 
 module.exports = router;
