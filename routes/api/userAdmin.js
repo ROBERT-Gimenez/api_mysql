@@ -7,7 +7,7 @@ const checkin = require("../../middlewares/checkin");
 const imgProfile = require("../../middlewares/imgProfile");
 
 
-router.get('/' , adminSession, user.list);
+router.get('/' , user.list);
 
 router.get('/:id' , loginValidation ,  user.userDetail);
 
