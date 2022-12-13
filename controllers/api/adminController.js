@@ -21,6 +21,7 @@ module.exports = {
                 data: products
                 }
             res.status(200).json(respuesta);
-            })   })
+            })
+           })
     }
 }

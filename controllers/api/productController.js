@@ -19,14 +19,19 @@ const path = require("path");
 
         
     }, 
-    detalle:async (req , res) => {
-        try{
-            let producto = await products.findOne({where:{id:+req.params.id}},{include: ['category']} );
-            let category = await categori.findOne({where:{id:producto.categoryid}});
-            producto.categoryid = category.nombre ;
-            return res.status(200).json(producto);
-
-        }catch(error){res.send(error)}
+    detalle: (req, res) => {
+        products.findByPk(+req.params.id)
+        .then((product) => {
+            let respuesta = {
+                meta: {
+                    status : 200,
+                    total: products.length,
+                    url: `https://localhost:4000/api/producto/${product.id}`
+                },
+                data: product
+            }
+                res.status(200).json(respuesta);
+        })
     },
     create:async(req , res) => {
         try{

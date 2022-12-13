@@ -16,6 +16,6 @@ router.delete('/delete/:id',uploadFile.single('image'), productController.delete
 
 //Compras 
 
-router.get('/compras-realizadas', adminController.comprasList);
-
+/* router.get('/compras-realizadas', adminController.comprasList);
+ */
 module.exports = router;
