@@ -100,6 +100,31 @@ module.exports= {
                 }
             })
             }catch (err){ res.send(err)}
-    } 
+    } ,
+    processRegister: (req, res) => {
+        let errors = validationResult(req);
+             
+        if(errors.isEmpty()){
+            users.create({
+                name:req.body.name,
+                email: req.body.email,
+                rol_id: 1,
+                password: bcrypt.hashSync(req.body.password , 10),
+                avatar: req.file ? req.file.filename : "user-default.png",
+                telefono: req.body.telefono
+            })
+            .then((user) => {
+                let resp = {
+                    meta:{
+                        status:200,
+                        total:user.length,
+                        url:'http://localhost:4000/api/user/create'
+                    },
+                    data:user
+                }
+                res.json(resp);
+            }).catch((err) =>{ console.log(err)})
+            }
+        }
+    }
 
-}
