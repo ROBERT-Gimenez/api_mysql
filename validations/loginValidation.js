@@ -9,7 +9,7 @@ let validateLogin = [
     check("password")
         .notEmpty().withMessage("Ingrese una Contraseña"),
     body("custom").custom((value, { req }) => {
-        return users.findOne({where:{email:req.params.email}})
+        return users.findOne({where:{email:req.body.email}})
         .then((user) => {
             let validation = bcrypt.compareSync(req.body.password , user.password);
             if(!bcrypt.compareSync(req.body.password , user.password)){

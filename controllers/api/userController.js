@@ -29,7 +29,9 @@ module.exports= {
         }).catch((err)=>{console.log(err)})
     },
     processLogin: (req, res) => {
-       
+        let errors = validationResult(req);
+        
+        if(errors.isEmpty()){
             users.findOne({
                 where:{ email: req.body.email}
             })
@@ -53,7 +55,9 @@ module.exports= {
             }
             res.json(resp);
         }).catch((err) =>{ console.log(err)})
-        },
+        }else{
+            return res.json({ errors: errors.array() });
+        }},
     userDetail: async (req,res) => {
 
        
