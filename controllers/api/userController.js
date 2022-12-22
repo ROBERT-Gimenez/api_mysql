@@ -29,21 +29,11 @@ module.exports= {
         }).catch((err)=>{console.log(err)})
     },
     processLogin: (req, res) => {
-        let errors = validationResult(req);
-        
-        if(errors.isEmpty()){
-
+       
             users.findOne({
                 where:{ email: req.body.email}
             })
             .then((user)=>{
-                req.session.user = {
-                id: user.id,
-                name: user.name,
-                avatar: user.avatar,
-                email: user.email,
-                rol: user.rol_id
-            } 
             
             if(req.body.recordar){
                 const TIME_IN_MILISECONDS = 60000;
@@ -53,12 +43,17 @@ module.exports= {
                     secure: true
                 })
             }
-
-            res.locals.user = req.session.user
-
-            res.redirect('/')
-        }).catch(( error )=> {console.log(error)})
-        }},
+            let resp = {
+                meta:{
+                    status:200,
+                    total:user,
+                    url:'http://localhost:4000/api/user/Login'
+                },
+                data:user
+            }
+            res.json(resp);
+        }).catch((err) =>{ console.log(err)})
+        },
     userDetail: async (req,res) => {
 
        
