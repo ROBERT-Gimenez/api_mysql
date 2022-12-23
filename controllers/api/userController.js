@@ -4,6 +4,15 @@ const {users} = require('../../db');
 const path = require('path');
 const fs = require('fs');
 const toThousand = n => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+const jwt = require("jsonwebtoken");
+
+
+
+
+   
+  
+  
+         
 
 
 module.exports= {
@@ -30,13 +39,18 @@ module.exports= {
     },
     processLogin: (req, res) => {
         let errors = validationResult(req);
-        
+
+       
         if(errors.isEmpty()){
             users.findOne({
                 where:{ email: req.body.email}
             })
             .then((user)=>{
             
+            const token = jwt.sign({ id: user.id }, config.secret, {
+                    expiresIn: 86400 // 24 hours
+                    });
+
             if(req.body.recordar){
                 const TIME_IN_MILISECONDS = 60000;
                 res.cookie('Bikemastercookie', req.session.user, {
@@ -53,19 +67,20 @@ module.exports= {
                 },
                 data:user
             }
-            res.json(resp);
+            res.json([resp,token]);
         }).catch((err) =>{ console.log(err)})
         }else{
-            return res.json({ errors: errors.array() });
+            return res.status(401).send({
+                errors: errors ,
+                accessToken: null,
+                message: "Invalid Password!"
+              });
         }},
     userDetail: async (req,res) => {
-
-       
-            console.log(req.params.id)
-            const user = await users.findOne({where: {id:req.params.id}})
-            .then((user) => {
+        const user = await users.findOne({where: {id:req.params.id}})
+                .then((user) => {
                 res.json(user);
-            }).catch((err)=>{console.log(err)})
+                }).catch((err)=>{console.log(err)})
           
        
     },

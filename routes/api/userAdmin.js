@@ -4,9 +4,11 @@ const loginValidation = require("../../validations/loginValidation");
 const registerValidation = require("../../validations/registerValidation");
 const adminSession = require("../../middlewares/adminCheck");
 const imgProfile = require("../../middlewares/imgProfile");
-
+const authJwt = require("../../authJwt")
 
 router.get('/' , user.list);
+
+router.get('/detail/:id' , [authJwt.verifyToken], user.userDetail);
 
 router.post('/login', loginValidation  , user.processLogin);
 /* router.get('/:id' , loginValidation ,  user.userDetail);
