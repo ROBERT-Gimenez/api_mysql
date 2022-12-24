@@ -20,6 +20,7 @@ verifyToken = (req, res, next) => {
     req.userId = decoded.id;
     next();
   });
+};
 
   isAdmin = (req, res, next) => {
     users.findByPk(req.userId).then(user => {
@@ -35,7 +36,6 @@ verifyToken = (req, res, next) => {
         return;
       });
   };
-};
 
 const authJwt = {
   verifyToken: verifyToken,

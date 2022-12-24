@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const toThousand = n => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 const jwt = require("jsonwebtoken");
+const config = require("../../config/auth.config.js")
 
 
 
@@ -49,7 +50,7 @@ module.exports= {
             
             const token = jwt.sign({ id: user.id }, config.secret, {
                     expiresIn: 86400 // 24 hours
-                    });
+                    })
 
             if(req.body.recordar){
                 const TIME_IN_MILISECONDS = 60000;
@@ -67,13 +68,13 @@ module.exports= {
                 },
                 data:user
             }
-            res.json([resp,token]);
+            res.json(resp);
         }).catch((err) =>{ console.log(err)})
         }else{
             return res.status(401).send({
-                errors: errors ,
+                errors: errors.errors[0].location,
                 accessToken: null,
-                message: "Invalid Password!"
+                message: errors.errors[0].msg
               });
         }},
     userDetail: async (req,res) => {
