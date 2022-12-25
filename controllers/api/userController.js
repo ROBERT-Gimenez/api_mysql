@@ -66,7 +66,7 @@ module.exports= {
                     total:user,
                     url:'http://localhost:4000/api/user/Login'
                 },
-                data:user
+                data:{user,token}
             }
             res.json(resp);
         }).catch((err) =>{ console.log(err)})
