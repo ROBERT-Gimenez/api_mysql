@@ -39,6 +39,8 @@ module.exports= {
         }).catch((err)=>{console.log(err)})
     },
     processLogin: (req, res) => {
+
+        const secret = "BikeMaster22-secret-key";
         let errors = validationResult(req);
 
        
@@ -47,10 +49,11 @@ module.exports= {
                 where:{ email: req.body.email}
             })
             .then((user)=>{
-            
-            const token = jwt.sign({ id: user.id }, config.secret, {
-                    expiresIn: 86400 // 24 hours
-                    })
+            const payload = {
+                    userId: user.id,
+                    name: user.name
+                  };
+            const newToken  = jwt.sign(payload, secret);
 
             if(req.body.recordar){
                 const TIME_IN_MILISECONDS = 60000;
@@ -66,7 +69,7 @@ module.exports= {
                     total:user,
                     url:'http://localhost:4000/api/user/Login'
                 },
-                data:{user,token}
+                data:{user,token:newToken }
             }
             res.json(resp);
         }).catch((err) =>{ console.log(err)})

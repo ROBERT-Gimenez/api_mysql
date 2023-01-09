@@ -2,43 +2,33 @@ const jwt = require("jsonwebtoken");
 const config = require("./config/auth.config.js");
 const {users} = require('./db');
 
-verifyToken = (req, res, next) => {
-  let token = req.headers["x-access-token"];
+// Clave secreta para firmar el JWT
+const secret = 'BikeMaster22-secret-key';
+
+// Crea el middleware
+function verifyToken(req, res, next) {
+  // Obtiene el token del encabezado de autorización
+  const token = req.headers['x-access-token'];
 
   if (!token) {
-    return res.status(403).send({
-      message: "No token provided!"
+    return res.status(401).send({
+      message: 'No token provided'
     });
   }
 
-  jwt.verify(token, config.secret, (err, decoded) => {
-    if (err) {
+  // Verifica el token
+  jwt.verify(token, secret, (error, decoded) => {
+    if (error) {
       return res.status(401).send({
-        message: "Unauthorized!"
+        message: 'Token is not valid'
       });
     }
-    req.userId = decoded.id;
+
+    // Si el token es válido, guarda los datos de los reclamos en el objeto de solicitud
+    // para que puedan ser utilizados en otras rutas
+    req.decoded = decoded;
     next();
   });
-};
+}
 
-  isAdmin = (req, res, next) => {
-    users.findByPk(req.userId).then(user => {
-
-          if (user.rol_id === 2) {
-            next();
-            return;
-          }
-  
-        res.status(403).send({
-          message: "Require Admin Role!"
-        });
-        return;
-      });
-  };
-
-const authJwt = {
-  verifyToken: verifyToken,
-  isAdmin: isAdmin,
-};
-module.exports = authJwt;
+module.exports = verifyToken;
