@@ -9,13 +9,8 @@ const config = require("../../config/auth.config.js")
 
 
 
-
    
   
-  
-         
-
-
 module.exports= {
     list:async (req,res)=> {
        await users.findAll()
@@ -32,6 +27,9 @@ module.exports= {
         }).catch((err) =>{ console.log(err)})
     },
     create:async (req,res) => {
+        if (!req.body.avatar) {
+            req.body.avatar = 'user-default.png';
+          }
         req.body.password = bcrypt.hashSync(req.body.password , 10);
         const user = await users.create(req.body)
         .then((user) => {
@@ -88,6 +86,25 @@ module.exports= {
           
        
     },
+    userAvatar:async (req, res) => {
+        try {
+          const user = await users.findOne({ where: { id: req.params.id } });
+          const avatarPath = path.resolve(__dirname, '../../public/images/profile', user.avatar);
+          fs.readFile(avatarPath, (err, data) => {
+            if (err) {
+              console.error(err);
+              res.status(500).send('Error al leer la imagen del avatar');
+              return;
+            }
+      
+            res.set('Content-Type', 'image/jpeg');
+            res.send(data);
+          });
+        } catch (err) {
+          console.error(err);
+          res.status(500).send('Error al obtener los datos del usuario');
+        }
+      },
     userUpdate:async (req,res)=> {
         try{
             let userId = +req.session.user.id

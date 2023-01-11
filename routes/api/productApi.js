@@ -8,6 +8,8 @@ router.get('/', productController.list);
 
 router.get('/:id', productController.detalle);
 
+router.get('/img/:id', productController.imgs);
+
 router.post('/create', uploadFile.single('image'), productController.create);
 
 router.put('/edit/:id', productController.productUpdate);

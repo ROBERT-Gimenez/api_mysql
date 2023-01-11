@@ -33,6 +33,21 @@ const path = require("path");
                 res.status(200).json(respuesta);
         })
     },
+    imgs:(req, res) => {
+        products.findByPk(+req.params.id)
+        .then((product) => {
+          const filePath = path.resolve(__dirname, '../../public/images/products', product.image);
+          fs.readFile(filePath, (err, data) => {
+            if (err) {
+              // maneja el error aquí
+              console.error(err);
+              res.status(500).send('Error al leer el archivo de imagen');
+              return;
+            }
+            res.set('Content-Type', 'image/jpeg');
+            res.send(data);
+          });
+        })},
     create:async(req , res) => {
         try{
             await products.create(req.body)
@@ -46,8 +61,8 @@ const path = require("path");
                     .then((Producto)=>{
                     let image = Producto.image;
                     try{ 
-                        if(fs.existsSync(path.join(__dirname ,'../../public/img/products/'+ image))){
-                            fs.unlinkSync(path.join(__dirname ,'../../public/img/products/'+ image))
+                        if(fs.existsSync(path.join(__dirname ,'../../public/images/products/'+ image))){
+                            fs.unlinkSync(path.join(__dirname ,'../../public/images/products/'+ image))
                         }}catch(err){ res.send(err)           
                         }                              
                 }).catch((error)=>{ res.send(error)})

@@ -10,6 +10,8 @@ router.get('/' , user.list);
 
 router.get('/detail/:id' , verifyToken , user.userDetail);
 
+router.get('/avatar/:id'  , user.userAvatar);
+
 router.post('/login', loginValidation  , user.processLogin);
 /* router.get('/:id' , loginValidation ,  user.userDetail);
  */
