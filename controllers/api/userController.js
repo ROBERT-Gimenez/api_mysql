@@ -1,11 +1,11 @@
 const bcrypt = require('bcryptjs')
 const { validationResult } = require('express-validator');
-const {users} = require('../../db');
+const {users,direccion} = require('../../db');
 const path = require('path');
 const fs = require('fs');
 const toThousand = n => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 const jwt = require("jsonwebtoken");
-const config = require("../../config/auth.config.js")
+const config = require("../../config/auth.config.js");
 
 
 
@@ -79,13 +79,29 @@ module.exports= {
               });
         }},
     userDetail: async (req,res) => {
-        const user = await users.findOne({where: {id:req.params.id}})
-                .then((user) => {
-                res.json(user);
-                }).catch((err)=>{console.log(err)})
+        try {
+            const user = await users.findOne({
+                where: { id: req.params.id },
+            });            
+            let direction = await direccion.findAll({
+                where: { id:  user.direccion_id },
+            });
+            if (!direction) {
+                return res.status(404).json({ message: "Direccion not found" });
+            }          
+            const response = {
+                user,
+                direction
+            };
+           return res.json(response);
+   
+               
+               }catch (error) {
+                console.log(error);
+                return res.status(500).json({ message: "An error occured" })
           
        
-    },
+    }},
     userAvatar:async (req, res) => {
         try {
           const user = await users.findOne({ where: { id: req.params.id } });

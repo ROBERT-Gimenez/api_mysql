@@ -1,5 +1,5 @@
 module.exports = ( sequelize , type) => {
-    return sequelize.define('usuario' , {
+    const usuario = sequelize.define('usuario' , {
         id: {
             type: type.INTEGER(11),
             primaryKey: true,
@@ -12,8 +12,11 @@ module.exports = ( sequelize , type) => {
         },
         direccion_id:{
             type:type.INTEGER(11),
-            allowNull: true
-        },
+            allowNull: true,
+            references: {
+                model: 'direcciones',
+                key: 'id'
+        }},
         rol_id: {
             type: type.INTEGER(11),
             allowNull: false,
@@ -42,5 +45,14 @@ module.exports = ( sequelize , type) => {
             defaultValue: null
         }
 
-    })
+    });
+
+    usuario.associate = (models) => {
+        Usuario.belongsTo(models.direcciones, {
+            foreignKey: 'direccion_id',
+            as: 'direccion'
+        })
+};
+return usuario
+
 }

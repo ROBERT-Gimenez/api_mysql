@@ -8,7 +8,7 @@ const verifyToken = require("../../authJwt")
 
 router.get('/' , user.list);
 
-router.get('/detail/:id' , verifyToken , user.userDetail);
+router.get('/detail/:id' /* , verifyToken  */, user.userDetail);
 
 router.get('/avatar/:id'  , user.userAvatar);
 
@@ -17,7 +17,7 @@ router.post('/login', loginValidation  , user.processLogin);
  */
 router.post('/create' , registerValidation ,  imgProfile.single('avatar'), user.create );
 
-router.put('/:id' , user.userUpdate );
+router.put('/edit/:id' , user.userUpdate );
 
 router.delete('/:id' , user.userUpdate );
 
