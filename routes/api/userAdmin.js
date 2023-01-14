@@ -17,8 +17,9 @@ router.post('/login', loginValidation  , user.processLogin);
  */
 router.post('/create' , registerValidation ,  imgProfile.single('avatar'), user.create );
 
-router.put('/edit/:id' , user.userUpdate );
+router.put('/edit/:id' , imgProfile.single('avatar') ,user.userUpdate );
 
 router.delete('/:id' , user.userUpdate );
+
 
 module.exports = router;

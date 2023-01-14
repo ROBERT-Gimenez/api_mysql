@@ -83,7 +83,7 @@ module.exports= {
             const user = await users.findOne({
                 where: { id: req.params.id },
             });            
-            let direction = await direccion.findAll({
+            const direction = await direccion.findAll({
                 where: { id:  user.direccion_id },
             });
             if (!direction) {
@@ -122,7 +122,66 @@ module.exports= {
         }
       },
     userUpdate:async (req,res)=> {
-        try{
+        try {
+            let updateUser = {};
+            let updateAddress = {};
+            const user = await users.findByPk(req.params.id);
+
+
+            
+            if (req.body.name || req.file) {
+                if (!user) throw new Error("user not found");
+    
+                if (req.body.name && req.body.name.trim().length === 0) throw new Error("name is empty")
+                updateUser.name = req.body.name;
+                updateUser.telefono = req.body.telefono ? +req.body.telefono : user.telefono;
+                updateUser.avatar = req.file ? req.file.filename : user.avatar;
+
+                if (req.file) {
+                    updateUser.avatar = req.file.filename;
+                    if (user.avatar !== "user-default.png" && fs.existsSync(path.join('public/images/profile/' + user.avatar))) {
+                        try {
+                            fs.unlinkSync(path.join('public/images/profile/' + user.avatar));
+                        } catch (err) {
+                            console.log(`Error deleting old avatar for user ${user.id}: ${err}`)
+                        }
+                    }
+                } else {
+                    updateUser.avatar = user.avatar;
+                }
+            }
+            if (req.body.direccion) {
+              if(req.body.direccion.trim().length === 0) throw new Error("direccion is empty")
+              updateAddress.direccion = req.body.direccion;
+              updateAddress.altura = req.body.altura;
+              updateAddress.localidad = req.body.localidad;
+              updateAddress.provincia = req.body.provincia;
+            }
+           
+           
+                      
+            let updatedAddress = await direccion.findOne({ where: { id: user.direccion_id } });
+            if (!updatedAddress) {
+              updatedAddress = await direccion.create(updateAddress);
+            } else {
+              updatedAddress = await updatedAddress.update(updateAddress);
+            }
+            
+            const updatedUser = await users.update({name:updateUser.name ,telefono:updateUser.telefono , avatar:updateUser.avatar  , direccion_id:updatedAddress.id }, { where: { id: req.params.id } });
+            res.status(200).json({ message:'User and address updated' , user: updatedUser, address: updatedAddress });
+          }catch (error) {
+            console.log(error);
+            res.status(404).json({
+                message: 'Error updating user and address',
+                name: error.name,
+                code: error.code,
+                stack: error.stack,
+                message: error.message
+              });  
+            }
+        }
+        
+       /*  try{
             let userId = +req.session.user.id
             let errors = validationResult(req)
             await users.findByPk(userId) // Se obtiene los datos del usuario por el ID
@@ -151,7 +210,7 @@ module.exports= {
                 }
             })
             }catch (err){ res.send(err)}
-    } ,
+    } */ ,
     processRegister: (req, res) => {
         let errors = validationResult(req);
              
