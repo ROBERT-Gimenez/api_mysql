@@ -135,13 +135,14 @@ module.exports= {
                 if (req.body.name && req.body.name.trim().length === 0) throw new Error("name is empty")
                 updateUser.name = req.body.name;
                 updateUser.telefono = req.body.telefono ? +req.body.telefono : user.telefono;
-                updateUser.avatar = req.file ? req.file.filename : user.avatar;
+                updateUser.avatar = req.file.filename;
 
-                if (req.file) {
+                if (req.file !== undefined) {
                     updateUser.avatar = req.file.filename;
-                    if (user.avatar !== "user-default.png" && fs.existsSync(path.join('public/images/profile/' + user.avatar))) {
+                    if(fs.existsSync(path.join(__dirname, '../../public/images/profile/' + user.avatar))
+                            && user.avatar !== "user-default.png") {
                         try {
-                            fs.unlinkSync(path.join('public/images/profile/' + user.avatar));
+                            fs.unlinkSync(path.join(__dirname, '../../public/images/profile/' + user.avatar))
                         } catch (err) {
                             console.log(`Error deleting old avatar for user ${user.id}: ${err}`)
                         }
