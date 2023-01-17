@@ -33,7 +33,7 @@ module.exports = ( sequelize , type) => {
             allowNull: true
         },
         telefono: {
-            type: type.INTEGER(20),
+            type: type.STRING(20),
             allowNull: true
         },
         social_id: {

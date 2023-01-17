@@ -128,15 +128,17 @@ module.exports= {
             const user = await users.findByPk(req.params.id);
 
 
-            
-            if (req.body.name || req.file) {
+           
+            if (req.body.name || req.body.telefono) {
                 if (!user) throw new Error("user not found");
-    
+                
                 if (req.body.name && req.body.name.trim().length === 0) throw new Error("name is empty")
-                updateUser.name = req.body.name;
+                updateUser.name = req.body.name ? req.body.name : user.name;
                 updateUser.telefono = req.body.telefono ? +req.body.telefono : user.telefono;
-                updateUser.avatar = req.file.filename;
-
+                }
+                if ( req.file) {
+                    updateUser.avatar = req.file ? req.file.filename :user.avatar;
+                    
                 if (req.file !== undefined) {
                     updateUser.avatar = req.file.filename;
                     if(fs.existsSync(path.join(__dirname, '../../public/images/profile/' + user.avatar))
@@ -151,7 +153,7 @@ module.exports= {
                     updateUser.avatar = user.avatar;
                 }
             }
-            if (req.body.direccion) {
+            if (req.body.direccion && req.body.provincia) {
               if(req.body.direccion.trim().length === 0) throw new Error("direccion is empty")
               updateAddress.direccion = req.body.direccion;
               updateAddress.altura = req.body.altura;
@@ -168,7 +170,12 @@ module.exports= {
               updatedAddress = await updatedAddress.update(updateAddress);
             }
             
-            const updatedUser = await users.update({name:updateUser.name ,telefono:updateUser.telefono , avatar:updateUser.avatar  , direccion_id:updatedAddress.id }, { where: { id: req.params.id } });
+            const updatedUser = await users.update({name:updateUser.name ,
+                                telefono:updateUser.telefono ,
+                                avatar:updateUser.avatar  ,
+                                direccion_id:updatedAddress.id ,
+                                altura:updateAddress.altura },
+                                { where: { id: req.params.id } });
             res.status(200).json({ message:'User and address updated' , user: updatedUser, address: updatedAddress });
           }catch (error) {
             console.log(error);
