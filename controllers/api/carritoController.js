@@ -34,7 +34,7 @@ module.exports = {
         
     }, 
     CarroAdded:async(req, res) => {
-            const user = await carrito.create(req.body)
+            const Product = await carrito.create(req.body)
             .then((user) => {
                 res.json(user);
             }).catch((err)=>{console.log(err)})
