@@ -8,7 +8,7 @@ module.exports = {
                 meta: {
                     status : 200,
                     total: products.length,
-                    url: 'https://localhost:3000/api/producto'
+                    url: 'https://localhost:4000/api/Carrito'
                 },
                 data: products
             }
@@ -24,7 +24,7 @@ module.exports = {
                 meta: {
                     status : 200,
                     total: products.length,
-                    url: 'https://localhost:3000/api/producto'
+                    url:'https://localhost:4000/api/Carrito/addedToShopping/:id'
                 },
                 data: products
             }
@@ -33,10 +33,31 @@ module.exports = {
 
         
     }, 
-    CarroAdded:async(req, res) => {
-            const Product = await carrito.create(req.body)
-            .then((user) => {
-                res.json(user);
-            }).catch((err)=>{console.log(err)})
+    CarroAdded:(req, res) => {
+            const prod = req.body.product_id
+            const user = req.body.usuario_id
+            carrito.findOne({ where: { product_id: prod, usuario_id: user } })
+            .then((product) => {
+
+              if (!product) {
+                carrito.create({
+                  usuario_id: req.body.usuario_id,
+                  product_id: req.body.product_id
+                }).then((user) => {
+
+                  res.json(user);
+
+                }).catch((err) => {
+                  console.log("error = " + err );
+                });
+              } else {
+                console.log("Product already exists");
+                res.status(400).send({ message: "Product already exists" });
+              }
+            }).catch((err) => {
+
+              console.log("error = "+ err );
+
+            });
         }
 }
